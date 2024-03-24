@@ -1,40 +1,42 @@
-let myImageArray = [];
+let walkingFrames = []; // Array to hold walking animation frames
 let imageX = 100;
 let imageY = 100; // Add variable for vertical movement
 let i = 0;
-let myFood1; // Additional food item
-let myFood2; // Additional food item
-let timer = 60; // Countdown timer in seconds
-let movementSpeed = 5; // Increase movement speed
+let myImageArray = [];
+let myFood1;
+let myFood2;
+let timer = 60;
+let movementSpeed = 5;
 let eatGoodSound;
 let eatBadSound;
-let health = 100; // Initialize health
+let health = 100;
 let healthBarWidth = 200;
 let healthBarHeight = 20;
 let bgMusic;
-let myObstacles = []; // Array to hold obstacle objects
+let myObstacles = [];
 
 function preload() {
-    eatGoodSound = loadSound("sounds/385892__spacether__262312__steffcaffrey__cat-meow1.mp3"); // Adjusted file path for good sound
-    eatBadSound = loadSound("sounds/159367__huminaatio__7-error.wav"); // Adjusted file path for bad sound
-    bgMusic = loadSound("sounds/645486__skylarmianlind__pulse-width.wav"); // Background music
+    // Load walking animation frames
+    for (let n = 1; n <= 10; n++) {
+        walkingFrames.push(loadImage("images/Walk (" + n + ").png"));
+    }
+    eatGoodSound = loadSound("sounds/385892__spacether__262312__steffcaffrey__cat-meow1.mp3");
+    eatBadSound = loadSound("sounds/159367__huminaatio__7-error.wav");
+    bgMusic = loadSound("sounds/645486__skylarmianlind__pulse-width.wav");
 }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
     // Create character images
-    for (let n = 1; n <= 10; n++) {
-        let img = loadImage("images/Idle (" + n + ").png");
-        let myImage = new MyImage(img, imageX, imageY, 100, 100); // Adjust image creation to include vertical movement
+    for (let i = 0; i < walkingFrames.length; i++) {
+        let myImage = new MyImage(walkingFrames, imageX, imageY, 100, 100);
         myImageArray.push(myImage);
     }
 
-    // Create food objects
-    myFood1 = new Food(random(width), random(height)); // Random initial position
-    myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Random initial position, green color
+    myFood1 = new Food(random(width), random(height));
+    myFood2 = new Food(random(width), random(height), [0, 255, 0]);
 
-    // Create obstacle rectangles
     for (let i = 0; i < 4; i++) {
         let obstacle = {
             x: random(width),
@@ -45,31 +47,23 @@ function setup() {
         myObstacles.push(obstacle);
     }
 
-    // Set interval for animation
     setInterval(updateImage, 50);
-
-    // Set interval for random movement of food
     setInterval(moveFoodRandomly, 1000);
-
-    // Play background music
     bgMusic.loop();
 }
 
 function draw() {
     background(220);
 
-    // Draw character, food, and obstacles
     myImageArray[i].draw();
     myFood1.display();
     myFood2.display();
 
-    // Draw obstacles
-    fill(0, 0, 255); // Blue color for obstacles
+    fill(0, 0, 255);
     for (let obstacle of myObstacles) {
         rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
     }
 
-    // Handle character movement
     let newX = imageX;
     let newY = imageY;
     if (keyIsDown(65)) { // A key
@@ -85,17 +79,14 @@ function draw() {
         newY += movementSpeed;
     }
 
-    // Check for collision between character and obstacles
     let canMoveX = true;
     let canMoveY = true;
     for (let obstacle of myObstacles) {
-        // Check collision on X-axis
         if (newX + myImageArray[i].width >= obstacle.x && newX <= obstacle.x + obstacle.width &&
             imageY + myImageArray[i].height >= obstacle.y && imageY <= obstacle.y + obstacle.height) {
             canMoveX = false;
             break;
         }
-        // Check collision on Y-axis
         if (imageX + myImageArray[i].width >= obstacle.x && imageX <= obstacle.x + obstacle.width &&
             newY + myImageArray[i].height >= obstacle.y && newY <= obstacle.y + obstacle.height) {
             canMoveY = false;
@@ -103,7 +94,6 @@ function draw() {
         }
     }
 
-    // Update character positions if movement is allowed
     if (canMoveX) {
         imageX = newX;
     }
@@ -111,19 +101,14 @@ function draw() {
         imageY = newY;
     }
 
-    // Update character positions
     myImageArray.forEach(myImage => {
         myImage.update(imageX, imageY);
     });
 
-    // Check for collision between character and food
     myFood1.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height);
     myFood2.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height);
 
-    // Display timer
     displayTimer();
-
-    // Display health
     displayHealth();
 }
 
@@ -140,34 +125,31 @@ function displayTimer() {
     textAlign(LEFT);
     textSize(20);
     fill(0);
-    text("Time: " + timer, width /
-    10, height / 10);
+    text("Time: " + timer, width / 10, height / 10);
     if (frameCount % 60 == 0 && timer > 0) {
         timer--;
     }
     if (timer === 0) {
-        // Game over
         textSize(40);
         textAlign(CENTER, CENTER);
         text("Game Over!", width / 2, height / 2);
-        noLoop(); // Stop the draw loop
+        noLoop();
     }
 }
 
 function displayHealth() {
-    // Draw health bar background
     fill(255);
     rect(width / 2 - healthBarWidth / 2, 20, healthBarWidth, healthBarHeight);
 
-    // Draw filled portion of health bar based on health percentage
     let filledWidth = map(health, 0, 100, 0, healthBarWidth);
     fill(0, 255, 0);
     rect(width / 2 - healthBarWidth / 2, 20, filledWidth, healthBarHeight);
 }
 
 class MyImage {
-    constructor(img, x, y, width, height) {
-        this.img = img;
+    constructor(frames, x, y, width, height) {
+        this.frames = frames;
+        this.currentFrame = 0;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -175,12 +157,13 @@ class MyImage {
     }
 
     draw() {
-        image(this.img, this.x, this.y, this.width, this.height);
+        image(this.frames[this.currentFrame], this.x, this.y, this.width, this.height);
     }
 
     update(newX, newY) {
         this.x = newX;
-        this.y = newY; // Update both x and y positions
+        this.y = newY;
+        this.currentFrame = (this.currentFrame + 1) % this.frames.length; // Cycle through frames
     }
 }
 
@@ -222,5 +205,13 @@ class Food {
         this.x = random(width);
         this.y = random(height);
     }
+}
+
+function keyPressed() {
+    // Add key press events here if needed
+}
+
+function keyReleased() {
+    // Add key release events here if needed
 }
 
