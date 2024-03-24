@@ -12,6 +12,7 @@ let health = 100; // Initialize health
 let healthBarWidth = 200;
 let healthBarHeight = 20;
 let bgMusic;
+let myObstacles = []; // Array to hold obstacle objects
 
 function preload() {
     eatGoodSound = loadSound("sounds/385892__spacether__262312__steffcaffrey__cat-meow1.mp3"); // Adjusted file path for good sound
@@ -33,6 +34,17 @@ function setup() {
     myFood1 = new Food(random(width), random(height)); // Random initial position
     myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Random initial position, green color
 
+    // Create obstacle rectangles
+    for (let i = 0; i < 4; i++) {
+        let obstacle = {
+            x: random(width),
+            y: random(height),
+            width: 50,
+            height: 50
+        };
+        myObstacles.push(obstacle);
+    }
+
     // Set interval for animation
     setInterval(updateImage, 50);
 
@@ -46,23 +58,57 @@ function setup() {
 function draw() {
     background(220);
 
-    // Draw character and food
+    // Draw character, food, and obstacles
     myImageArray[i].draw();
     myFood1.display();
     myFood2.display();
 
+    // Draw obstacles
+    fill(0, 0, 255); // Blue color for obstacles
+    for (let obstacle of myObstacles) {
+        rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    }
+
     // Handle character movement
+    let newX = imageX;
+    let newY = imageY;
     if (keyIsDown(65)) { // A key
-        imageX -= movementSpeed;
+        newX -= movementSpeed;
     }
     if (keyIsDown(68)) { // D key
-        imageX += movementSpeed;
+        newX += movementSpeed;
     }
     if (keyIsDown(87)) { // W key
-        imageY -= movementSpeed;
+        newY -= movementSpeed;
     }
     if (keyIsDown(83)) { // S key
-        imageY += movementSpeed;
+        newY += movementSpeed;
+    }
+
+    // Check for collision between character and obstacles
+    let canMoveX = true;
+    let canMoveY = true;
+    for (let obstacle of myObstacles) {
+        // Check collision on X-axis
+        if (newX + myImageArray[i].width >= obstacle.x && newX <= obstacle.x + obstacle.width &&
+            imageY + myImageArray[i].height >= obstacle.y && imageY <= obstacle.y + obstacle.height) {
+            canMoveX = false;
+            break;
+        }
+        // Check collision on Y-axis
+        if (imageX + myImageArray[i].width >= obstacle.x && imageX <= obstacle.x + obstacle.width &&
+            newY + myImageArray[i].height >= obstacle.y && newY <= obstacle.y + obstacle.height) {
+            canMoveY = false;
+            break;
+        }
+    }
+
+    // Update character positions if movement is allowed
+    if (canMoveX) {
+        imageX = newX;
+    }
+    if (canMoveY) {
+        imageY = newY;
     }
 
     // Update character positions
@@ -94,7 +140,8 @@ function displayTimer() {
     textAlign(LEFT);
     textSize(20);
     fill(0);
-    text("Time: " + timer, width / 10, height / 10);
+    text("Time: " + timer, width /
+    10, height / 10);
     if (frameCount % 60 == 0 && timer > 0) {
         timer--;
     }
