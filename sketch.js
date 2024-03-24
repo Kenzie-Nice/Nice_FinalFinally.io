@@ -1,4 +1,4 @@
-let walkingFrames = []; // Array to hold walking animation frames
+let walkingFrames = []; //lil legs go zoooom
 let imageX = 100;
 let imageY = 100; // Add variable for vertical movement
 let i = 0;
@@ -14,12 +14,12 @@ let healthBarWidth = 200;
 let healthBarHeight = 20;
 let bgMusic;
 let myObstacles = [];
-let score = 0; // Initialize score variable
-let gameOver = false; // Flag to check if game over message is displayed
-let win = false; // Flag to check if win message is displayed
+let score = 0; 
+let gameOver = false; 
+let win = false; 
 
 function preload() {
-    // Load walking animation frames
+    //walking animation
     for (let n = 1; n <= 10; n++) {
         walkingFrames.push(loadImage("images/Walk (" + n + ").png"));
     }
@@ -108,12 +108,12 @@ function draw() {
         myImage.update(imageX, imageY);
     });
 
-    // Check for collision with food
+    //collision food
     if (myFood1.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        // Increment score if red food collected
+     
     }
     if (myFood2.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        // Decrement score if green food collected
+        
     }
 
     // Display score
@@ -124,7 +124,7 @@ function draw() {
     displayTimer();
     displayHealth();
 
-    // Check win/lose conditions
+    //win/lose conditions
     if (score >= 10) {
         win = true;
         gameOver = true;
@@ -203,7 +203,7 @@ class Food {
     constructor(x, y, color) {
         this.x = x;
         this.y = y;
-        this.color = color || [255, 0, 0]; // Default to red if color is not specified
+        this.color = color || [255, 0, 0];
         this.size = 20;
     }
 
@@ -223,29 +223,29 @@ class Food {
         let distance = dist(this.x, this.y, x + width / 2, y + height / 2);
         if (distance < (this.size + min(width, height)) / 2) {
             if (this.color[0] === 255 && this.color[1] === 0 && this.color[2] === 0) { // Red food
-                score += 1; // Increase score by 1 for red food
-                health += 10; // Increase health for red food
+                score += 1; // Increase score
+                health += 10; // Increase health 
                 eatGoodSound.play(); // Play sound for red food
             } else if (this.color[0] === 0 && this.color[1] === 255 && this.color[2] === 0) { // Green food
-                score -= 1; // Decrease score by 1 for green food
-                health -= 10; // Decrease health for green food
+                score -= 1; // Decrease score
+                health -= 10; // Decrease health
                 if (score < 0) {
-                    score = 0; // Ensure score doesn't go below 0
+                    score = 0;
                 }
                 if (health < 0) {
-                    health = 0; // Ensure health doesn't go below 0
+                    health = 0; 
                 }
-                eatBadSound.play(); // Play sound for green food
+                eatBadSound.play(); 
             }
-            // Check for game over condition (health reaches 0)
+            // you dead
             if (health === 0) {
                 gameOver = true;
             }
-            // Reset food position
+            //food position
             this.reset();
-            return true; // Food collected
+            return true;
         }
-        return false; // Food not collected
+        return false; 
     }
 
     reset() {
