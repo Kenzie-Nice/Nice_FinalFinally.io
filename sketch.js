@@ -5,8 +5,8 @@ let i = 0;
 let myImageArray = [];
 let myFood1;
 let myFood2;
-let timer = 30;
-let movementSpeed = 3;
+let timer = 60;
+let movementSpeed = 5;
 let eatGoodSound;
 let eatBadSound;
 let health = 100;
@@ -14,6 +14,9 @@ let healthBarWidth = 200;
 let healthBarHeight = 20;
 let bgMusic;
 let myObstacles = [];
+let score = 0; // Initialize score variable
+let gameOver = false; // Flag to check if game over message is displayed
+let win = false; // Flag to check if win message is displayed
 
 function preload() {
     // Load walking animation frames
@@ -34,8 +37,8 @@ function setup() {
         myImageArray.push(myImage);
     }
 
-    myFood1 = new Food(random(width), random(height));
-    myFood2 = new Food(random(width), random(height), [0, 255, 0]);
+    myFood1 = new Food(random(width), random(height), [255, 0, 0]); // Red food
+    myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Green food
 
     for (let i = 0; i < 4; i++) {
         let obstacle = {
@@ -105,11 +108,44 @@ function draw() {
         myImage.update(imageX, imageY);
     });
 
-    myFood1.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height);
-    myFood2.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height);
+    // Check for collision with food
+    if (myFood1.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
+        // Increment score if red food collected
+    }
+    if (myFood2.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
+        // Decrement score if green food collected
+    }
+
+    // Display score
+    fill(0);
+    textSize(20);
+    text("Score: " + score, width / 10, height / 30);
 
     displayTimer();
     displayHealth();
+
+    // Check win/lose conditions
+    if (score >= 10) {
+        win = true;
+        gameOver = true;
+    }
+
+    if (health <= 0) {
+        gameOver = true;
+    }
+
+    if (gameOver) {
+        if (win) {
+            textSize(40);
+            textAlign(CENTER, CENTER);
+            text("You Win!", width / 2, height / 2);
+        } else {
+            textSize(40);
+            textAlign(CENTER, CENTER);
+            text("Game Over!", width / 2, height / 2);
+        }
+        noLoop(); // Stop the draw loop
+    }
 }
 
 function updateImage() {
@@ -130,10 +166,7 @@ function displayTimer() {
         timer--;
     }
     if (timer === 0) {
-        textSize(40);
-        textAlign(CENTER, CENTER);
-        text("Game Over!", width / 2, height / 2);
-        noLoop();
+        gameOver = true;
     }
 }
 
@@ -166,13 +199,12 @@ class MyImage {
         this.currentFrame = (this.currentFrame + 1) % this.frames.length; // Cycle through frames
     }
 }
-
 class Food {
     constructor(x, y, color) {
         this.x = x;
         this.y = y;
-        this.size = 20;
         this.color = color || [255, 0, 0]; // Default to red if color is not specified
+        this.size = 20;
     }
 
     display() {
@@ -190,15 +222,30 @@ class Food {
     isCollected(x, y, width, height) {
         let distance = dist(this.x, this.y, x + width / 2, y + height / 2);
         if (distance < (this.size + min(width, height)) / 2) {
-            if (this.color[0] === 255 && this.color[1] === 0 && this.color[2] === 0) { // Checking if food is red
-                health += 10; // Increase health for food1
-                eatGoodSound.play(); // Play sound for food1
-            } else {
-                health -= 10; // Decrease health for food2
-                eatBadSound.play(); // Play sound for food2
+            if (this.color[0] === 255 && this.color[1] === 0 && this.color[2] === 0) { // Red food
+                score += 1; // Increase score by 1 for red food
+                health += 10; // Increase health for red food
+                eatGoodSound.play(); // Play sound for red food
+            } else if (this.color[0] === 0 && this.color[1] === 255 && this.color[2] === 0) { // Green food
+                score -= 1; // Decrease score by 1 for green food
+                health -= 10; // Decrease health for green food
+                if (score < 0) {
+                    score = 0; // Ensure score doesn't go below 0
+                }
+                if (health < 0) {
+                    health = 0; // Ensure health doesn't go below 0
+                }
+                eatBadSound.play(); // Play sound for green food
             }
+            // Check for game over condition (health reaches 0)
+            if (health === 0) {
+                gameOver = true;
+            }
+            // Reset food position
             this.reset();
+            return true; // Food collected
         }
+        return false; // Food not collected
     }
 
     reset() {
@@ -206,12 +253,3 @@ class Food {
         this.y = random(height);
     }
 }
-
-function keyPressed() {
-    // Add key press events here if needed
-}
-
-function keyReleased() {
-    // Add key release events here if needed
-}
-
