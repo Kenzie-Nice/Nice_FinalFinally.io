@@ -1,6 +1,6 @@
 let walkingFrames = []; //lil legs go zoooom
 let imageX = 100;
-let imageY = 100; // Add variable for vertical movement
+let imageY = 100;
 let i = 0;
 let myImageArray = [];
 let myFood1;
@@ -20,7 +20,7 @@ let myObstacles = [];
 let score = 0; 
 let gameOver = false; 
 let win = false; 
-let particles = [];
+let particles = []; //press F for demoliton
 
 function preload() {
     //walking animation
@@ -40,11 +40,11 @@ function setup() {
         myImageArray.push(myImage);
     }
 
-    myFood1 = new Food(random(width), random(height), [255, 0, 0]); // Red food
-    myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Green food
-    myFood3 = new Food(random(width), random(height), [255, 0, 0]); // Red food
-    myFood4 = new Food(random(width), random(height), [0, 255, 0]); // Green food
-    myFood5 = new Food(random(width), random(height), [255, 0, 0]); // Red food
+    myFood1 = new Food(random(width), random(height), [255, 0, 0]); // Red 
+    myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Green 
+    myFood3 = new Food(random(width), random(height), [255, 0, 0]); // Red
+    myFood4 = new Food(random(width), random(height), [0, 255, 0]); // Green 
+    myFood5 = new Food(random(width), random(height), [255, 0, 0]); // Red 
 
     for (let i = 0; i < 4; i++) {
         let obstacle = {
@@ -128,13 +128,14 @@ function draw() {
         myImage.update(imageX, imageY);
     });
 
-    //collision food
+    // Food 1 
     if (myFood1.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
         score++;
         health += 10;
         eatGoodSound.play();
         myFood1.reset();
     }
+    // 2
     if (myFood2.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
         score--;
         health -= 10;
@@ -147,13 +148,14 @@ function draw() {
         eatBadSound.play();
         myFood2.reset();
     }
-      //collision food
+    // 3
     if (myFood3.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
         score++;
         health += 10;
         eatGoodSound.play();
         myFood3.reset();
     }
+    // 4
     if (myFood4.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
         score--;
         health -= 10;
@@ -166,6 +168,7 @@ function draw() {
         eatBadSound.play();
         myFood4.reset();
     }
+    // 5
     if (myFood5.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
         score--;
         health -= 10;
@@ -178,7 +181,7 @@ function draw() {
         eatBadSound.play();
         myFood5.reset();
     }
-    // Display score
+  
     fill(0);
     textSize(20);
     text("Score: " + score, width / 10, height / 30);
@@ -186,7 +189,7 @@ function draw() {
     displayTimer();
     displayHealth();
 
-    //win/lose conditions
+   
     if (score >= 10) {
         win = true;
         gameOver = true;
@@ -206,7 +209,7 @@ function draw() {
             textAlign(CENTER, CENTER);
             text("Game Over!", width / 2, height / 2);
         }
-        noLoop(); // Stop the draw loop
+        noLoop();
     }
 }
 
@@ -262,7 +265,7 @@ class MyImage {
     update(newX, newY) {
         this.x = newX;
         this.y = newY;
-        this.currentFrame = (this.currentFrame + 1) % this.frames.length; // Cycle through frames
+        this.currentFrame = (this.currentFrame + 1) % this.frames.length; 
     }
 }
 
@@ -290,12 +293,12 @@ class Food {
         let distance = dist(this.x, this.y, x + width / 2, y + height / 2);
         if (distance < (this.size + min(width, height)) / 2) {
             if (this.color[0] === 255 && this.color[1] === 0 && this.color[2] === 0) { // Red food
-                score++; // Increase score
-                health += 10; // Increase health 
-                eatGoodSound.play(); // Play sound for red food
+                score++; 
+                health += 10; 
+                eatGoodSound.play(); 
             } else if (this.color[0] === 0 && this.color[1] === 255 && this.color[2] === 0) { // Green food
-                score--; // Decrease score
-                health -= 10; // Decrease health
+                score--; 
+                health -= 10; 
                 if (score < 0) {
                     score = 0;
                 }
@@ -323,7 +326,7 @@ class Food {
 
 function keyPressed() {
     if (key === 'f' || key === 'F') {
-        // Find the closest blue obstacle to the player
+      
         let closestObstacleIndex = -1;
         let closestObstacleDistance = Infinity;
 
@@ -338,13 +341,15 @@ function keyPressed() {
             }
         }
 
-        // Remove the closest blue obstacle from the canvas
+     
         if (closestObstacleIndex !== -1) {
             createExplosion(myObstacles[closestObstacleIndex].x + myObstacles[closestObstacleIndex].width / 2, myObstacles[closestObstacleIndex].y + myObstacles[closestObstacleIndex].height / 2);
             myObstacles.splice(closestObstacleIndex, 1);
         }
     }
 }
+
+// fun with particles
 
 function createExplosion(x, y) {
     for (let i = 0; i < 30; i++) {
@@ -354,12 +359,12 @@ function createExplosion(x, y) {
         let vy = sin(angle) * speed;
         let size = random(3, 10);
         let lifespan = random(20, 50);
-        let particleColor = color(random(255), random(255), random(255)); // Renamed to particleColor
+        let particleColor = color(random(255), random(255), random(255));
         particles.push(new Particle(x, y, vx, vy, size, lifespan, particleColor));
     }
 }
 
-
+// Particles
 class Particle {
     constructor(x, y, vx, vy, size, lifespan, color) {
         this.x = x;
@@ -386,3 +391,5 @@ class Particle {
         return this.lifespan <= 0;
     }
 }
+
+// i feel like I am forgetting something? I was going to change something but I dont remember what now....
