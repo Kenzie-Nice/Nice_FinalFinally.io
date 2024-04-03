@@ -5,6 +5,9 @@ let i = 0;
 let myImageArray = [];
 let myFood1;
 let myFood2;
+let myFood3;
+let myFood4;
+let myFood5;
 let timer = 60;
 let movementSpeed = 5;
 let eatGoodSound;
@@ -17,6 +20,7 @@ let myObstacles = [];
 let score = 0; 
 let gameOver = false; 
 let win = false; 
+let particles = [];
 
 function preload() {
     //walking animation
@@ -27,7 +31,6 @@ function preload() {
     eatBadSound = loadSound("sounds/159367__huminaatio__7-error.wav");
     bgMusic = loadSound("sounds/645486__skylarmianlind__pulse-width.wav");
 }
-
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
@@ -39,13 +42,17 @@ function setup() {
 
     myFood1 = new Food(random(width), random(height), [255, 0, 0]); // Red food
     myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Green food
+    myFood3 = new Food(random(width), random(height), [255, 0, 0]); // Red food
+    myFood4 = new Food(random(width), random(height), [0, 255, 0]); // Green food
+    myFood5 = new Food(random(width), random(height), [255, 0, 0]); // Red food
 
     for (let i = 0; i < 4; i++) {
         let obstacle = {
             x: random(width),
             y: random(height),
             width: 50,
-            height: 50
+            height: 50,
+            color: [0, 0, 255]
         };
         myObstacles.push(obstacle);
     }
@@ -55,16 +62,29 @@ function setup() {
     bgMusic.loop();
 }
 
+
 function draw() {
     background(220);
 
     myImageArray[i].draw();
     myFood1.display();
     myFood2.display();
+      myFood3.display();
+      myFood4.display();
+      myFood5.display();
 
     fill(0, 0, 255);
     for (let obstacle of myObstacles) {
         rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    }
+
+    // Update and display particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].display();
+        if (particles[i].isDead()) {
+            particles.splice(i, 1);
+        }
     }
 
     let newX = imageX;
@@ -110,12 +130,54 @@ function draw() {
 
     //collision food
     if (myFood1.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-     
+        score++;
+        health += 10;
+        eatGoodSound.play();
+        myFood1.reset();
     }
     if (myFood2.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        
+        score--;
+        health -= 10;
+        if (score < 0) {
+            score = 0;
+        }
+        if (health < 0) {
+            health = 0; 
+        }
+        eatBadSound.play();
+        myFood2.reset();
     }
-
+      //collision food
+    if (myFood3.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
+        score++;
+        health += 10;
+        eatGoodSound.play();
+        myFood3.reset();
+    }
+    if (myFood4.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
+        score--;
+        health -= 10;
+        if (score < 0) {
+            score = 0;
+        }
+        if (health < 0) {
+            health = 0; 
+        }
+        eatBadSound.play();
+        myFood4.reset();
+    }
+    if (myFood5.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
+        score--;
+        health -= 10;
+        if (score < 0) {
+            score = 0;
+        }
+        if (health < 0) {
+            health = 0; 
+        }
+        eatBadSound.play();
+        myFood5.reset();
+    }
     // Display score
     fill(0);
     textSize(20);
@@ -155,6 +217,10 @@ function updateImage() {
 function moveFoodRandomly() {
     myFood1.moveRandomly();
     myFood2.moveRandomly();
+    myFood3.moveRandomly();
+    myFood4.moveRandomly();
+  myFood5.moveRandomly();
+  
 }
 
 function displayTimer() {
@@ -199,6 +265,7 @@ class MyImage {
         this.currentFrame = (this.currentFrame + 1) % this.frames.length; // Cycle through frames
     }
 }
+
 class Food {
     constructor(x, y, color) {
         this.x = x;
@@ -223,11 +290,11 @@ class Food {
         let distance = dist(this.x, this.y, x + width / 2, y + height / 2);
         if (distance < (this.size + min(width, height)) / 2) {
             if (this.color[0] === 255 && this.color[1] === 0 && this.color[2] === 0) { // Red food
-                score += 1; // Increase score
+                score++; // Increase score
                 health += 10; // Increase health 
                 eatGoodSound.play(); // Play sound for red food
             } else if (this.color[0] === 0 && this.color[1] === 255 && this.color[2] === 0) { // Green food
-                score -= 1; // Decrease score
+                score--; // Decrease score
                 health -= 10; // Decrease health
                 if (score < 0) {
                     score = 0;
@@ -251,5 +318,71 @@ class Food {
     reset() {
         this.x = random(width);
         this.y = random(height);
+    }
+}
+
+function keyPressed() {
+    if (key === 'f' || key === 'F') {
+        // Find the closest blue obstacle to the player
+        let closestObstacleIndex = -1;
+        let closestObstacleDistance = Infinity;
+
+        for (let i = 0; i < myObstacles.length; i++) {
+            let obstacle = myObstacles[i];
+            if (obstacle.color && obstacle.color[0] === 0 && obstacle.color[1] === 0 && obstacle.color[2] === 255) {
+                let distance = dist(imageX + myImageArray[i].width / 2, imageY + myImageArray[i].height / 2, obstacle.x + obstacle.width / 2, obstacle.y + obstacle.height / 2);
+                if (distance < closestObstacleDistance) {
+                    closestObstacleDistance = distance;
+                    closestObstacleIndex = i;
+                }
+            }
+        }
+
+        // Remove the closest blue obstacle from the canvas
+        if (closestObstacleIndex !== -1) {
+            createExplosion(myObstacles[closestObstacleIndex].x + myObstacles[closestObstacleIndex].width / 2, myObstacles[closestObstacleIndex].y + myObstacles[closestObstacleIndex].height / 2);
+            myObstacles.splice(closestObstacleIndex, 1);
+        }
+    }
+}
+
+function createExplosion(x, y) {
+    for (let i = 0; i < 30; i++) {
+        let angle = random(TWO_PI);
+        let speed = random(1, 5);
+        let vx = cos(angle) * speed;
+        let vy = sin(angle) * speed;
+        let size = random(3, 10);
+        let lifespan = random(20, 50);
+        let particleColor = color(random(255), random(255), random(255)); // Renamed to particleColor
+        particles.push(new Particle(x, y, vx, vy, size, lifespan, particleColor));
+    }
+}
+
+
+class Particle {
+    constructor(x, y, vx, vy, size, lifespan, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.size = size;
+        this.lifespan = lifespan;
+        this.color = color;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.lifespan--;
+    }
+
+    display() {
+        fill(this.color);
+        ellipse(this.x, this.y, this.size);
+    }
+
+    isDead() {
+        return this.lifespan <= 0;
     }
 }
