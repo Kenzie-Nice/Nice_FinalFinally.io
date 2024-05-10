@@ -71,11 +71,28 @@ function setup() {
     bgMusic.loop();
 }
 
+// Declare variables for control movement legend
+let legendX = 20;
+let legendY = 20;
+let legendWidth = 200;
+let legendHeight = 120;
 
 function draw() {
     // Draw background image
     image(bgImage, 0, 0, width, height);
 
+    // Draw control movement legend
+    fill(255);
+    rect(legendX, legendY, legendWidth, legendHeight);
+    fill(0);
+    textSize(16);
+    text("Controls:", legendX + 10, legendY + 20);
+    text("W - Up", legendX + 30, legendY + 40);
+    text("S - Down", legendX + 30, legendY + 60);
+    text("A - Left", legendX + 30, legendY + 80);
+    text("D - Right", legendX + 30, legendY + 100);
+
+    // Draw control movement
     myImageArray[i].draw();
     myFood1.display();
     myFood2.display();
@@ -83,6 +100,7 @@ function draw() {
     myFood4.display();
     myFood5.display();
 
+    // Draw obstacles
     fill(0, 0, 255);
     for (let obstacle of myObstacles) {
         rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
@@ -97,141 +115,40 @@ function draw() {
         }
     }
 
-    let newX = imageX;
-    let newY = imageY;
-    if (keyIsDown(65)) { // A key
-        newX -= movementSpeed;
-    }
-    if (keyIsDown(68)) { // D key
-        newX += movementSpeed;
-    }
-    if (keyIsDown(87)) { // W key
-        newY -= movementSpeed;
-    }
-    if (keyIsDown(83)) { // S key
-        newY += movementSpeed;
-    }
-
-    let canMoveX = true;
-    let canMoveY = true;
-    for (let obstacle of myObstacles) {
-        if (newX + myImageArray[i].width >= obstacle.x && newX <= obstacle.x + obstacle.width &&
-            imageY + myImageArray[i].height >= obstacle.y && imageY <= obstacle.y + obstacle.height) {
-            canMoveX = false;
-            break;
-        }
-        if (imageX + myImageArray[i].width >= obstacle.x && imageX <= obstacle.x + obstacle.width &&
-            newY + myImageArray[i].height >= obstacle.y && newY <= obstacle.y + obstacle.height) {
-            canMoveY = false;
-            break;
-        }
-    }
-
-    if (canMoveX) {
-        imageX = newX;
-    }
-    if (canMoveY) {
-        imageY = newY;
-    }
-
+    // Draw player image
     myImageArray.forEach(myImage => {
         myImage.update(imageX, imageY);
     });
 
-    //collision food
-    if (myFood1.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        score++;
-        health += 10;
-        eatGoodSound.play();
-        myFood1.reset();
-    }
-    if (myFood2.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        score--;
-        health -= 10;
-        if (score < 0) {
-            score = 0;
-        }
-        if (health < 0) {
-            health = 0; 
-        }
-        eatBadSound.play();
-        myFood2.reset();
-    }
-    //collision food
-    if (myFood3.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        score++;
-        health += 10;
-        eatGoodSound.play();
-        myFood3.reset();
-    }
-    if (myFood4.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        score--;
-        health -= 10;
-        if (score < 0) {
-            score = 0;
-        }
-        if (health < 0) {
-            health = 0; 
-        }
-        eatBadSound.play();
-        myFood4.reset();
-    }
-    if (myFood5.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        score--;
-        health -= 10;
-        if (score < 0) {
-            score = 0;
-        }
-        if (health < 0) {
-            health = 0; 
-        }
-        eatBadSound.play();
-        myFood5.reset();
-    }
-
-    //collision special ball
-    if (specialBall.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
-        // Trigger sparkle effect
-        specialBall.sparkleEffect();
-        // Handle other actions when special ball is collected
-        // For example: Increase score, play sound, etc.
-        // Reset special ball position
-        specialBall.reset();
-    }
-
-    // Display score
-    fill(255);
+    // Draw score
+    fill(0);
     textSize(20);
     text("Score: " + score, width / 10, height / 30);
 
+    // Display timer
     displayTimer();
+
+    // Display health
     displayHealth();
 
-    //win/lose conditions
-    if (score >= 10) {
-        win = true;
-        gameOver = true;
-    }
+    // Display win/lose messages
+    displayGameResult();
+}
 
-    if (health <= 0) {
-        gameOver = true;
-    }
-
+function displayGameResult() {
     if (gameOver) {
+        textSize(40);
+        textAlign(CENTER, CENTER);
+        fill(0, 255, 255); // Bright cyan color
         if (win) {
-            textSize(40);
-            textAlign(CENTER, CENTER);
-            fill(0, 255, 255); // Bright cyan color
             text("You Win!", width / 2, height / 2);
         } else {
-            textSize(40);
-            textAlign(CENTER, CENTER);
-            fill(0, 255, 255); // Bright cyan color
             text("Game Over!", width / 2, height / 2);
         }
         noLoop(); // Stop the draw loop
     }
 }
+
 
 function updateImage() {
     i = (i + 1) % myImageArray.length;
