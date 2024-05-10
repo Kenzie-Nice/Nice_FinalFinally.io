@@ -1,6 +1,6 @@
 let walkingFrames = []; //lil legs go zoooom
 let imageX = 100;
-let imageY = 100;
+let imageY = 100; // Add variable for vertical movement
 let i = 0;
 let myImageArray = [];
 let myFood1;
@@ -21,14 +21,14 @@ let score = 0;
 let gameOver = false; 
 let win = false; 
 let particles = [];
-let specialBall; 
+let specialBall; // Declare special ball variable
 
 // Control legend
 let controlLegend = "Controls:\nW - Up\nA - Left\nS - Down\nD - Right";
 let legendWidth = 200;
-let legendHeight = 80;
-let legendX = width - legendWidth - 10;
-let legendY = height - legendHeight - 10;
+let legendHeight = 100;
+let legendX = 20;
+let legendY = 20;
 
 function preload() {
     //walking animation
@@ -54,10 +54,11 @@ function setup() {
         myImageArray.push(myImage);
     }
 
-    myFood1 = new Food(random(width), random(height), [255, 0, 0]);
-    myFood3 = new Food(random(width), random(height), [255, 0, 0]);
-    myFood4 = new Food(random(width), random(height), [0, 255, 0]); 
-    myFood5 = new Food(random(width), random(height), [255, 0, 0]); 
+    myFood1 = new Food(random(width), random(height), [255, 0, 0]); // Red food
+    myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Green food
+    myFood3 = new Food(random(width), random(height), [255, 0, 0]); // Red food
+    myFood4 = new Food(random(width), random(height), [0, 255, 0]); // Green food
+    myFood5 = new Food(random(width), random(height), [255, 0, 0]); // Red food
 
     // Initialize special ball
     specialBall = new SpecialBall(random(width), random(height));
@@ -206,8 +207,8 @@ function draw() {
     }
 
     // Display score
-    fill(255);
-    textSize(40);
+    fill(0);
+    textSize(20);
     text("Score: " + score, width - 120, height / 30);
 
     displayTimer();
@@ -242,7 +243,7 @@ function draw() {
             fill(0, 255, 255); // Bright cyan color
             text("Game Over!", width / 2, height / 2);
         }
-        noLoop(); 
+        noLoop(); // Stop the draw loop
     }
 }
 
@@ -259,9 +260,9 @@ function moveFoodRandomly() {
 }
 
 function displayTimer() {
-    textAlign(RIGHT);
+    textAlign(LEFT);
     textSize(20);
-    fill(255);
+    fill(0);
     text("Time: " + timer, width / 10, height / 10);
     if (frameCount % 60 == 0 && timer > 0) {
         timer--;
