@@ -27,8 +27,8 @@ let specialBall; // Declare special ball variable
 let controlLegend = "Controls:\nW - Up\nA - Left\nS - Down\nD - Right";
 let legendWidth = 200;
 let legendHeight = 100;
-let legendX = 20;
-let legendY = 20;
+let legendX;
+let legendY;
 
 function preload() {
     //walking animation
@@ -76,6 +76,10 @@ function setup() {
 
     setInterval(moveFoodRandomly, 1000);
     bgMusic.loop();
+    
+    // Set legend position
+    legendX = width - legendWidth - 20;
+    legendY = height - legendHeight - 20;
 }
 
 
@@ -200,14 +204,16 @@ function draw() {
     if (specialBall.isCollected(myImageArray[i].x, myImageArray[i].y, myImageArray[i].width, myImageArray[i].height)) {
         // Trigger sparkle effect
         specialBall.sparkleEffect();
-        // Handle other actions when special ball is collected
-        // For example: Increase score, play sound, etc.
+        // Increase score
+        score += 5;
         // Reset special ball position
         specialBall.reset();
+        // Play sound for special ball
+        eatGoodSound.play();
     }
 
     // Display score
-    fill(0);
+    fill(255);
     textSize(20);
     text("Score: " + score, width - 120, height / 30);
 
