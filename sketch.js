@@ -56,17 +56,16 @@ function setup() {
     // Initialize special ball
     specialBall = new SpecialBall(random(width), random(height));
 
-   for (let i = 0; i < 4; i++) {
-    let obstacle = {
-        x: random(width),
-        y: random(height),
-        width: 100,  // Adjusted width
-        height: 100, // Adjusted height
-        color: [0, 0, 255]
-    };
-    myObstacles.push(obstacle);
-}
-
+    for (let i = 0; i < 4; i++) {
+        let obstacle = {
+            x: random(width),
+            y: random(height),
+            width: 50,
+            height: 50,
+            color: [0, 0, 255]
+        };
+        myObstacles.push(obstacle);
+    }
 
     setInterval(moveFoodRandomly, 1000);
     bgMusic.loop();
@@ -201,16 +200,9 @@ function draw() {
     }
 
     // Display score
-    fill(0);
+    fill(255);
     textSize(20);
     text("Score: " + score, width / 10, height / 30);
-
-    // Enhance points display (coin icon and different font)
-    fill(0);
-    textSize(20);
-    text("Score: " + score, width / 10, height / 30);
-    textSize(16);
-    text("💰", width / 10 - 30, height / 30 + 5); // Coin icon
 
     displayTimer();
     displayHealth();
@@ -230,33 +222,50 @@ function draw() {
             textSize(40);
             textAlign(CENTER, CENTER);
             fill(0, 255, 255); // Bright cyan color
-            textStyle(BOLD); // Bold font style
             text("You Win!", width / 2, height / 2);
         } else {
             textSize(40);
             textAlign(CENTER, CENTER);
             fill(0, 255, 255); // Bright cyan color
-            textStyle(BOLD); // Bold font style
             text("Game Over!", width / 2, height / 2);
         }
         noLoop(); // Stop the draw loop
     }
 }
 
-function displayHealth() {
-    // Draw health bar background
-    fill(255);
-    rect(width / 2 - healthBarWidth / 2, 20, healthBarWidth, healthBarHeight);
-    // Draw filled health bar with different color
-    let filledWidth = map(health, 0, 100, 0, healthBarWidth);
-    fill(255, 0, 0); // Red color for health bar
-    rect(width / 2 - healthBarWidth / 2, 20, filledWidth, healthBarHeight);
-    // Draw heart icon for health
-    fill(255, 0, 0); // Red color for heart
-    textSize(20);
-    text("❤️", width / 2 + healthBarWidth / 2 + 20, 35);
+function updateImage() {
+    i = (i + 1) % myImageArray.length;
 }
 
+function moveFoodRandomly() {
+    myFood1.moveRandomly();
+    myFood2.moveRandomly();
+    myFood3.moveRandomly();
+    myFood4.moveRandomly();
+    myFood5.moveRandomly();
+}
+
+function displayTimer() {
+    textAlign(LEFT);
+    textSize(20);
+    fill(0);
+    text("Time: " + timer, width / 10, height / 10);
+    if (frameCount % 60 == 0 && timer > 0) {
+        timer--;
+    }
+    if (timer === 0) {
+        gameOver = true;
+    }
+}
+
+function displayHealth() {
+    fill(255);
+    rect(width / 2 - healthBarWidth / 2, 20, healthBarWidth, healthBarHeight);
+
+    let filledWidth = map(health, 0, 100, 0, healthBarWidth);
+    fill(0, 255, 0);
+    rect(width / 2 - healthBarWidth / 2, 20, filledWidth, healthBarHeight);
+}
 
 class MyImage {
     constructor(frames, x, y, width, height) {
