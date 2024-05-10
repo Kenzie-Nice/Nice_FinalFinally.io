@@ -1,6 +1,6 @@
 let walkingFrames = []; //lil legs go zoooom
 let imageX = 100;
-let imageY = 100; // Add variable for vertical movement
+let imageY = 100;
 let i = 0;
 let myImageArray = [];
 let myFood1;
@@ -21,7 +21,7 @@ let score = 0;
 let gameOver = false; 
 let win = false; 
 let particles = [];
-let specialBall; // Declare special ball variable
+let specialBall; 
 
 // Control legend
 let controlLegend = "Controls:\nW - Up\nA - Left\nS - Down\nD - Right";
@@ -54,11 +54,10 @@ function setup() {
         myImageArray.push(myImage);
     }
 
-    myFood1 = new Food(random(width), random(height), [255, 0, 0]); // Red food
-    myFood2 = new Food(random(width), random(height), [0, 255, 0]); // Green food
-    myFood3 = new Food(random(width), random(height), [255, 0, 0]); // Red food
-    myFood4 = new Food(random(width), random(height), [0, 255, 0]); // Green food
-    myFood5 = new Food(random(width), random(height), [255, 0, 0]); // Red food
+    myFood1 = new Food(random(width), random(height), [255, 0, 0]);
+    myFood3 = new Food(random(width), random(height), [255, 0, 0]);
+    myFood4 = new Food(random(width), random(height), [0, 255, 0]); 
+    myFood5 = new Food(random(width), random(height), [255, 0, 0]); 
 
     // Initialize special ball
     specialBall = new SpecialBall(random(width), random(height));
@@ -207,8 +206,8 @@ function draw() {
     }
 
     // Display score
-    fill(0);
-    textSize(20);
+    fill(255);
+    textSize(40);
     text("Score: " + score, width - 120, height / 30);
 
     displayTimer();
@@ -243,7 +242,7 @@ function draw() {
             fill(0, 255, 255); // Bright cyan color
             text("Game Over!", width / 2, height / 2);
         }
-        noLoop(); // Stop the draw loop
+        noLoop(); 
     }
 }
 
@@ -260,9 +259,9 @@ function moveFoodRandomly() {
 }
 
 function displayTimer() {
-    textAlign(LEFT);
+    textAlign(RIGHT);
     textSize(20);
-    fill(0);
+    fill(255);
     text("Time: " + timer, width / 10, height / 10);
     if (frameCount % 60 == 0 && timer > 0) {
         timer--;
