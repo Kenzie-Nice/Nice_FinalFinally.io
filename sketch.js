@@ -64,7 +64,7 @@ function setup() {
         myObstacles.push(obstacle);
     }
 
-    setInterval(updateImage, 50);
+    setInterval(updateImage, 30);
     setInterval(moveFoodRandomly, 1000);
     bgMusic.loop();
 }
