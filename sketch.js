@@ -26,9 +26,9 @@ let specialBall; // Declare special ball variable
 // Control legend
 let controlLegend = "Controls:\nW - Up\nA - Left\nS - Down\nD - Right";
 let legendWidth = 200;
-let legendHeight = 100;
-let legendX = 20;
-let legendY = 90;
+let legendHeight = 80;
+let legendX = 180;
+let legendY = 60;
 
 function preload() {
     //walking animation
