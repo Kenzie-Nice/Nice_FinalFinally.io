@@ -23,6 +23,12 @@ let win = false;
 let particles = [];
 let specialBall; // Declare special ball variable
 
+// Declare variables for control movement legend
+let legendX = 20;
+let legendY = 20;
+let legendWidth = 200;
+let legendHeight = 120;
+
 function preload() {
     //walking animation
     for (let n = 0; n <= 4; n++) {
@@ -71,11 +77,6 @@ function setup() {
     bgMusic.loop();
 }
 
-// Declare variables for control movement legend
-let legendX = 20;
-let legendY = 20;
-let legendWidth = 200;
-let legendHeight = 120;
 
 function draw() {
     // Draw background image
@@ -148,7 +149,6 @@ function displayGameResult() {
         noLoop(); // Stop the draw loop
     }
 }
-
 
 function updateImage() {
     i = (i + 1) % myImageArray.length;
