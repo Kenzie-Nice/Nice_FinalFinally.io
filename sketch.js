@@ -38,6 +38,9 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
+    // Set frame rate for smoother animation
+    frameRate(30);
+
     // Create character images
     for (let i = 0; i < walkingFrames.length; i++) {
         let myImage = new MyImage(walkingFrames, imageX, imageY, 100, 100);
@@ -64,10 +67,10 @@ function setup() {
         myObstacles.push(obstacle);
     }
 
-    setInterval(updateImage, 90);
     setInterval(moveFoodRandomly, 1000);
     bgMusic.loop();
 }
+
 
 function draw() {
     // Draw background image
