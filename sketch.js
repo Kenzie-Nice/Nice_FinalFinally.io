@@ -24,7 +24,7 @@ let particles = [];
 let specialBall; // Declare special ball variable
 
 // Declare variables for control movement legend
-let legendX = 20;
+let legendX = windowWidth - 250;
 let legendY = 20;
 let legendWidth = 200;
 let legendHeight = 120;
