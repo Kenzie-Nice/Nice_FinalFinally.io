@@ -1,6 +1,6 @@
 let walkingFrames = []; //lil legs go zoooom
 let imageX = 100;
-let imageY = 100; // Add variable for vertical movement
+let imageY = 100; 
 let i = 0;
 let myImageArray = [];
 let myFood1;
