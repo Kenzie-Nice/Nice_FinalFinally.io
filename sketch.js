@@ -22,11 +22,13 @@ let gameOver = false;
 let win = false; 
 let particles = [];
 let specialBall; // Declare special ball variable
-let controlLegend = "Use WASD keys to move"; // Control legend text
-let legendX = width - 250; // Legend position X
-let legendY = 20; // Legend position Y
-let legendWidth = 230; // Legend width
-let legendHeight = 60; // Legend height
+
+// Control legend
+let controlLegend = "Controls:\nW - Up\nA - Left\nS - Down\nD - Right";
+let legendWidth = 200;
+let legendHeight = 100;
+let legendX = 20;
+let legendY = 20;
 
 function preload() {
     //walking animation
@@ -207,18 +209,17 @@ function draw() {
     // Display score
     fill(0);
     textSize(20);
-    text("Score: " + score, width / 10, height / 30);
+    text("Score: " + score, width - 120, height / 30);
 
     displayTimer();
     displayHealth();
     
-    // Display control legend
+    // Draw control legend
     fill(255);
     rect(legendX, legendY, legendWidth, legendHeight);
     fill(0);
-    textSize(15);
-    textAlign(CENTER, CENTER);
-    text(controlLegend, legendX + legendWidth / 2, legendY + legendHeight / 2);
+    textSize(14);
+    text(controlLegend, legendX + 10, legendY + 20);
 
     //win/lose conditions
     if (score >= 10) {
@@ -239,7 +240,7 @@ function draw() {
         } else {
             textSize(40);
             textAlign(CENTER, CENTER);
-            fill(255, 0, 0); // Red color
+            fill(0, 255, 255); // Bright cyan color
             text("Game Over!", width / 2, height / 2);
         }
         noLoop(); // Stop the draw loop
