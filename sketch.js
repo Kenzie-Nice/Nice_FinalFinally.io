@@ -27,8 +27,8 @@ let specialBall;
 let controlLegend = "Controls:\nW - Up\nA - Left\nS - Down\nD - Right";
 let legendWidth = 200;
 let legendHeight = 80;
-let legendX = 180;
-let legendY = 60;
+let legendX = width - legendWidth - 10;
+let legendY = height - legendHeight - 10;
 
 function preload() {
     //walking animation
