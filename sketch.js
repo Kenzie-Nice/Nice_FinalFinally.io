@@ -28,7 +28,7 @@ let controlLegend = "Controls:\nW - Up\nA - Left\nS - Down\nD - Right";
 let legendWidth = 200;
 let legendHeight = 100;
 let legendX = 20;
-let legendY = 20;
+let legendY = 90;
 
 function preload() {
     //walking animation
